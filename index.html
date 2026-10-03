@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ms"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Countdown Majlis</title>
+<style>
+body{margin:0;background:#eaf5ff;font-family:Arial,sans-serif;text-align:center;color:#174d78}
+.wrap{padding:22px 12px}.title{font-size:15px;letter-spacing:2px;margin-bottom:14px}
+.row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.box{background:white;border:1px solid #c5dfef;border-radius:14px;padding:12px 10px;min-width:65px;box-shadow:0 5px 18px #5b88a520}
+.num{font-size:26px;font-weight:bold}.label{font-size:10px;margin-top:4px;letter-spacing:1px}
+</style></head><body>
+<div class="wrap"><div class="title">MENUJU HARI BAHAGIA</div><div class="row">
+<div class="box"><div class="num" id="d">00</div><div class="label">HARI</div></div>
+<div class="box"><div class="num" id="h">00</div><div class="label">JAM</div></div>
+<div class="box"><div class="num" id="m">00</div><div class="label">MINIT</div></div>
+<div class="box"><div class="num" id="s">00</div><div class="label">SAAT</div></div>
+</div></div>
+<script>
+const target=new Date("2026-12-28T12:00:00+08:00").getTime();
+function update(){let x=Math.max(0,target-Date.now());let d=Math.floor(x/86400000);x%=86400000;let h=Math.floor(x/3600000);x%=3600000;let m=Math.floor(x/60000);let s=Math.floor(x/1000)%60;
+document.getElementById("d").textContent=String(d).padStart(2,"0");document.getElementById("h").textContent=String(h).padStart(2,"0");document.getElementById("m").textContent=String(m).padStart(2,"0");document.getElementById("s").textContent=String(s).padStart(2,"0")}
+update();setInterval(update,1000);
+</script></body></html>
