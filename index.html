@@ -4,76 +4,124 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Muzik Majlis</title>
+
 <style>
 body{
   margin:0;
   background:transparent;
   font-family:Arial,sans-serif;
 }
+
 .player{
-  max-width:380px;
-  margin:20px auto;
-  padding:18px;
+  width:100%;
+  max-width:none;
+  margin:8px auto;
+  padding:12px 18px;
   box-sizing:border-box;
   border:1px solid #c6dfef;
-  border-radius:20px;
-  background:#f8fcff;
-  box-shadow:0 7px 22px rgba(40,90,130,.12);
+  border-radius:50px;
+  background:rgba(248,252,255,.95);
+  box-shadow:0 4px 15px rgba(40,90,130,.10);
   color:#174d78;
 }
-.title{
-  font-size:15px;
-  font-weight:bold;
-  letter-spacing:.5px;
-  margin-bottom:14px;
-}
-.controls{
+
+.music-row{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:14px;
 }
-button{
+
+.play-button{
   border:0;
   border-radius:50%;
-  width:48px;
-  height:48px;
+  width:44px;
+  height:44px;
+  min-width:44px;
   background:#5aa2d6;
   color:white;
-  font-size:19px;
+  font-size:17px;
   cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
+
+.music-info{
+  width:125px;
+  min-width:125px;
+}
+
+.title{
+  font-size:14px;
+  font-weight:bold;
+  letter-spacing:.3px;
+}
+
+.status{
+  font-size:10px;
+  color:#66839a;
+  margin-top:3px;
+}
+
 .progress{
   flex:1;
-  height:7px;
+  height:6px;
   background:#dceef9;
   border-radius:10px;
   overflow:hidden;
+  cursor:pointer;
 }
+
 .bar{
   height:100%;
   width:0%;
   background:#5aa2d6;
+  border-radius:10px;
+  transition:width .1s linear;
 }
-.status{
-  font-size:11px;
-  color:#66839a;
-  margin-top:10px;
+
+@media(max-width:500px){
+  .music-info{
+    width:95px;
+    min-width:95px;
+  }
+
+  .title{
+    font-size:12px;
+  }
+
+  .status{
+    font-size:9px;
+  }
+
+  .music-row{
+    gap:10px;
+  }
 }
 </style>
 </head>
 
 <body>
-<div class="player">
-  <div class="title">🎵 Muzik Majlis</div>
 
-  <div class="controls">
-    <button id="play" type="button">▶</button>
-    <div class="progress">
+<div class="player">
+
+  <div class="music-row">
+
+    <button class="play-button" id="play" type="button">▶</button>
+
+    <div class="music-info">
+      <div class="title">🎵 Muzik Majlis</div>
+      <div class="status" id="status">
+        Tekan ▶ untuk memainkan
+      </div>
+    </div>
+
+    <div class="progress" id="progress">
       <div class="bar" id="bar"></div>
     </div>
+
   </div>
 
-  <div class="status" id="status">Tekan ▶ untuk memainkan muzik</div>
 </div>
 
 <audio id="audio" preload="metadata">
@@ -81,47 +129,93 @@ button{
 </audio>
 
 <script>
+
 const audio = document.getElementById("audio");
 const play = document.getElementById("play");
 const bar = document.getElementById("bar");
 const status = document.getElementById("status");
+const progress = document.getElementById("progress");
 
 play.addEventListener("click", async () => {
-  if (audio.paused) {
-    try {
+
+  if(audio.paused){
+
+    try{
+
       await audio.play();
+
       play.textContent = "Ⅱ";
       status.textContent = "Muzik sedang dimainkan";
-    } catch (e) {
-      status.textContent = "Muzik gagal dimainkan. Cuba tekan ▶ sekali lagi.";
+
+    }catch(e){
+
+      status.textContent =
+      "Tekan ▶ sekali lagi";
+
       console.error(e);
+
     }
-  } else {
+
+  }else{
+
     audio.pause();
+
     play.textContent = "▶";
     status.textContent = "Muzik dijeda";
+
   }
+
 });
 
-audio.addEventListener("loadedmetadata", () => {
-  status.textContent = "Tekan ▶ untuk memainkan muzik";
-});
 
 audio.addEventListener("timeupdate", () => {
-  if (audio.duration) {
-    bar.style.width = (audio.currentTime / audio.duration * 100) + "%";
+
+  if(audio.duration){
+
+    const percent =
+    (audio.currentTime / audio.duration) * 100;
+
+    bar.style.width = percent + "%";
+
   }
+
 });
+
+
+progress.addEventListener("click", (e) => {
+
+  if(!audio.duration) return;
+
+  const rect = progress.getBoundingClientRect();
+
+  const percent =
+  (e.clientX - rect.left) / rect.width;
+
+  audio.currentTime =
+  percent * audio.duration;
+
+});
+
 
 audio.addEventListener("ended", () => {
+
   play.textContent = "▶";
+
   bar.style.width = "0%";
+
   status.textContent = "Muzik tamat";
+
 });
 
+
 audio.addEventListener("error", () => {
-  status.textContent = "Fail muzik tidak dapat dimuatkan.";
+
+  status.textContent =
+  "Fail muzik tidak dapat dimuatkan.";
+
 });
+
 </script>
+
 </body>
 </html>
